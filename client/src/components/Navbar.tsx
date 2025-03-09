@@ -101,13 +101,11 @@ const Navbar: React.FC = () => {
       {/* Main Navigation */}
       <nav className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center mb-4 md:mb-0">
-          <Link href="/">
-            <a className="flex items-center">
-              <div className="w-16 h-16">
-                <Logo size="small" />
-              </div>
-              <span className="sr-only">COSMIC BLUEPRINTS</span>
-            </a>
+          <Link href="/" className="flex items-center">
+            <div className="w-16 h-16">
+              <Logo size="small" />
+            </div>
+            <span className="sr-only">COSMIC BLUEPRINTS</span>
           </Link>
         </div>
         
@@ -122,19 +120,19 @@ const Navbar: React.FC = () => {
         <div className={`md:flex flex-wrap justify-center md:justify-end space-y-2 md:space-y-0 space-x-1 md:space-x-6 ${isOpen ? 'flex flex-col' : 'hidden'}`}>
           <Link 
             href="/" 
-            className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/' ? 'text-accent' : 'text-white'}`}
+            className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/' ? 'text-accent' : 'text-gray-200'}`}
           >
             Home
           </Link>
           <Link 
             href="/reports" 
-            className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/reports' ? 'text-accent' : 'text-white'}`}
+            className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/reports' ? 'text-accent' : 'text-gray-200'}`}
           >
             Reports
           </Link>
           <Link 
             href="/learn" 
-            className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/learn' ? 'text-accent' : 'text-white'}`}
+            className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/learn' ? 'text-accent' : 'text-gray-200'}`}
           >
             Learn
           </Link>

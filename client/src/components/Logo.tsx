@@ -23,10 +23,8 @@ const Logo: React.FC<LogoProps> = ({ size = 'medium', withLink = false }) => {
 
   if (withLink) {
     return (
-      <Link href="/">
-        <a className="flex items-center justify-center cursor-pointer">
-          {logoImage}
-        </a>
+      <Link href="/" className="flex items-center justify-center cursor-pointer">
+        {logoImage}
       </Link>
     );
   }

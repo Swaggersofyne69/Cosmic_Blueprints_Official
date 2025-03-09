@@ -49,33 +49,33 @@ const Footer: React.FC = () => {
             <h4 className="font-heading text-lg font-bold mb-6">Reports</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/reports">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Birth Chart Analysis</a>
+                <Link href="/reports" className="text-sm text-gray-300 hover:text-white transition">
+                  Birth Chart Analysis
                 </Link>
               </li>
               <li>
-                <Link href="/reports">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Relationship Compatibility</a>
+                <Link href="/reports" className="text-sm text-gray-300 hover:text-white transition">
+                  Relationship Compatibility
                 </Link>
               </li>
               <li>
-                <Link href="/reports">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Career & Purpose</a>
+                <Link href="/reports" className="text-sm text-gray-300 hover:text-white transition">
+                  Career & Purpose
                 </Link>
               </li>
               <li>
-                <Link href="/reports">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Solar Return</a>
+                <Link href="/reports" className="text-sm text-gray-300 hover:text-white transition">
+                  Solar Return
                 </Link>
               </li>
               <li>
-                <Link href="/reports">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Transit Forecast</a>
+                <Link href="/reports" className="text-sm text-gray-300 hover:text-white transition">
+                  Transit Forecast
                 </Link>
               </li>
               <li>
-                <Link href="/reports">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">View All Reports</a>
+                <Link href="/reports" className="text-sm text-gray-300 hover:text-white transition">
+                  View All Reports
                 </Link>
               </li>
             </ul>
@@ -85,33 +85,33 @@ const Footer: React.FC = () => {
             <h4 className="font-heading text-lg font-bold mb-6">Learn</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/learn">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Zodiac Signs</a>
+                <Link href="/learn" className="text-sm text-gray-300 hover:text-white transition">
+                  Zodiac Signs
                 </Link>
               </li>
               <li>
-                <Link href="/learn">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Planets & Houses</a>
+                <Link href="/learn" className="text-sm text-gray-300 hover:text-white transition">
+                  Planets & Houses
                 </Link>
               </li>
               <li>
-                <Link href="/learn">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Aspects & Transits</a>
+                <Link href="/learn" className="text-sm text-gray-300 hover:text-white transition">
+                  Aspects & Transits
                 </Link>
               </li>
               <li>
-                <Link href="/learn">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Astrology Basics</a>
+                <Link href="/learn" className="text-sm text-gray-300 hover:text-white transition">
+                  Astrology Basics
                 </Link>
               </li>
               <li>
-                <Link href="/learn">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Frequently Asked Questions</a>
+                <Link href="/learn" className="text-sm text-gray-300 hover:text-white transition">
+                  Frequently Asked Questions
                 </Link>
               </li>
               <li>
-                <Link href="/learn">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Astrology Blog</a>
+                <Link href="/learn" className="text-sm text-gray-300 hover:text-white transition">
+                  Astrology Blog
                 </Link>
               </li>
             </ul>
@@ -121,33 +121,33 @@ const Footer: React.FC = () => {
             <h4 className="font-heading text-lg font-bold mb-6">Company</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">About Us</a>
+                <Link href="/" className="text-sm text-gray-300 hover:text-white transition">
+                  About Us
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Our Astrologers</a>
+                <Link href="/" className="text-sm text-gray-300 hover:text-white transition">
+                  Our Astrologers
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Testimonials</a>
+                <Link href="/" className="text-sm text-gray-300 hover:text-white transition">
+                  Testimonials
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Contact Us</a>
+                <Link href="/" className="text-sm text-gray-300 hover:text-white transition">
+                  Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Privacy Policy</a>
+                <Link href="/" className="text-sm text-gray-300 hover:text-white transition">
+                  Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="text-sm opacity-70 hover:opacity-100 transition">Terms of Service</a>
+                <Link href="/" className="text-sm text-gray-300 hover:text-white transition">
+                  Terms of Service
                 </Link>
               </li>
             </ul>
@@ -155,7 +155,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-primary pt-8 text-center">
-          <p className="text-sm opacity-70">&copy; {new Date().getFullYear()} Cosmic Blueprints. All rights reserved.</p>
+          <p className="text-sm text-gray-300">&copy; {new Date().getFullYear()} Cosmic Blueprints. All rights reserved.</p>
         </div>
       </div>
     </footer>
