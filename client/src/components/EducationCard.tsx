@@ -25,10 +25,8 @@ const EducationCard: React.FC<EducationCardProps> = ({ content }) => {
         <h3 className="font-heading text-xl font-bold mb-2">{content.title}</h3>
         <p className="text-sm mb-4 text-primary opacity-70">{content.description}</p>
         
-        <Link href={`/learn/${content.id}`}>
-          <a className="inline-flex items-center text-primary hover:text-accent transition font-medium">
-            Learn More <ArrowRight className="ml-2 w-4 h-4" />
-          </a>
+        <Link href={`/learn/${content.id}`} className="inline-flex items-center text-primary hover:text-accent transition font-medium">
+          Learn More <ArrowRight className="ml-2 w-4 h-4" />
         </Link>
       </div>
     </div>

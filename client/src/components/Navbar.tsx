@@ -136,6 +136,14 @@ const Navbar: React.FC = () => {
           >
             Learn
           </Link>
+          {user?.isAdmin && (
+            <Link 
+              href="/admin" 
+              className={`px-2 py-1 hover:text-accent transition font-medium ${location === '/admin' ? 'text-accent' : 'text-gray-200'}`}
+            >
+              Admin
+            </Link>
+          )}
           <Link 
             href="/cart" 
             className="pl-2 pr-1 py-1 text-accent hover:text-white transition relative"
