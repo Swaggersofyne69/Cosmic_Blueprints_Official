@@ -65,9 +65,11 @@ const Home: React.FC = () => {
             </div>
             <div className="md:w-1/2 flex justify-center">
               <div className="relative w-72 h-72 md:w-96 md:h-96">
-                <div className="absolute inset-0 rounded-full">
-                  <ZodiacWheel size={384} />
-                </div>
+                <img 
+                  src="/images/cosmic-blueprints-logo.jpg" 
+                  alt="COSMIC BLUEPRINTS - Celestial Interpreter: Kyle Merritt" 
+                  className="w-full h-auto rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300"
+                />
               </div>
             </div>
           </div>

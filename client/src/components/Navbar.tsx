@@ -101,9 +101,13 @@ const Navbar: React.FC = () => {
       {/* Main Navigation */}
       <nav className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center mb-4 md:mb-0">
-          <Link href="/" className="flex items-center">
-            <Logo size="small" />
-            <span className="sr-only">COSMIC BLUEPRINTS</span>
+          <Link href="/">
+            <a className="flex items-center">
+              <div className="w-16 h-16">
+                <Logo size="small" />
+              </div>
+              <span className="sr-only">COSMIC BLUEPRINTS</span>
+            </a>
           </Link>
         </div>
         
