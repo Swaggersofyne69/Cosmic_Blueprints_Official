@@ -179,7 +179,7 @@ const Admin: React.FC = () => {
                           <DialogFooter>
                             <Button 
                               variant="outline" 
-                              onClick={() => {}} 
+                              type="button"
                               disabled={generatingReport}
                             >
                               Cancel

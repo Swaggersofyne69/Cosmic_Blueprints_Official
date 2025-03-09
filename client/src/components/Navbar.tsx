@@ -102,12 +102,8 @@ const Navbar: React.FC = () => {
       <nav className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center mb-4 md:mb-0">
           <Link href="/" className="flex items-center">
-            <div className="w-16 h-16 mr-3 rounded-full overflow-hidden">
-              <Logo />
-            </div>
-            <h1 className="font-heading text-2xl font-bold text-white">
-              COSMIC <span className="text-accent">BLUEPRINTS</span>
-            </h1>
+            <Logo size="small" />
+            <span className="sr-only">COSMIC BLUEPRINTS</span>
           </Link>
         </div>
         

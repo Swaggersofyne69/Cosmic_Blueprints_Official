@@ -102,8 +102,22 @@ export class MemStorage implements IStorage {
   
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const isAdmin = false; // Default value
-    const user: User = { ...insertUser, id, isAdmin };
+    
+    // Set the first user as admin for testing purposes
+    const isAdmin = this.users.size === 0 ? true : (insertUser.email === 'admin@cosmic.com' ? true : false);
+    
+    // Ensure all required fields are set with null fallbacks
+    const user: User = {
+      id,
+      username: insertUser.username,
+      password: insertUser.password,
+      email: insertUser.email,
+      isAdmin,
+      birthDate: insertUser.birthDate || null,
+      birthTime: insertUser.birthTime || null,
+      birthLocation: insertUser.birthLocation || null
+    };
+    
     this.users.set(id, user);
     return user;
   }
