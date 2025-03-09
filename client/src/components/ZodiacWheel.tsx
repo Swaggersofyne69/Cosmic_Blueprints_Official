@@ -31,7 +31,7 @@ const ZodiacWheel: React.FC<ZodiacWheelProps> = ({
         
         {/* Zodiac grid lines */}
         {Array.from({ length: 12 }).map((_, i) => (
-          <React.Fragment key={`zodiac-section-${i}`}>
+          <g key={`zodiac-section-${i}`}>
             <line 
               x1="250" 
               y1="30" 
@@ -53,7 +53,7 @@ const ZodiacWheel: React.FC<ZodiacWheelProps> = ({
             >
               {["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"][i]}
             </text>
-          </React.Fragment>
+          </g>
         ))}
         
         {/* Circular zones */}

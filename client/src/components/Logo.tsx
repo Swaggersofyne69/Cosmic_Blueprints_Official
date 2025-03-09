@@ -56,18 +56,36 @@ const Logo: React.FC = () => {
       {/* Center glowing star */}
       <circle cx="250" cy="250" r="60" fill="url(#starGlow)" />
       
-      {/* Logo text banner */}
-      <rect x="90" y="430" width="320" height="40" fill="white" />
+      {/* Main Logo Text */}
+      <rect x="90" y="400" width="320" height="40" rx="5" fill="white" />
       <text 
         x="250" 
-        y="460" 
+        y="430" 
         fontFamily="'Montserrat', sans-serif" 
-        fontSize="22" 
+        fontSize="24" 
         fontWeight="700" 
         textAnchor="middle" 
         fill="#1a3a5f"
       >
         COSMIC BLUEPRINTS
+      </text>
+      
+      {/* Royal Purple Ribbon with Tagline */}
+      <path 
+        d="M85 445 L415 445 L400 470 L100 470 Z" 
+        fill="#4B0082" 
+      />
+      <text 
+        x="250" 
+        y="462" 
+        fontFamily="'Cormorant Garamond', serif" 
+        fontSize="14" 
+        fontWeight="500" 
+        fontStyle="italic"
+        textAnchor="middle" 
+        fill="white"
+      >
+        Celestial Interpretations by Kyle Merritt
       </text>
       
       {/* Gradient definitions */}

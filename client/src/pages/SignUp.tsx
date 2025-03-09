@@ -71,20 +71,27 @@ const SignUp: React.FC = () => {
       setIsLoading(true);
       setErrorMessage(null);
       
-      // Format date for API
-      let formattedBirthDate = null;
-      if (values.birthDate) {
-        formattedBirthDate = new Date(values.birthDate).toISOString();
-      }
-      
-      await register({
+      // Prepare data for registration
+      const userData = {
         username: values.username,
         email: values.email,
         password: values.password,
-        birthDate: formattedBirthDate,
-        birthTime: values.birthTime,
-        birthLocation: values.birthLocation,
-      });
+        // Skip birthDate if not provided
+        ...(values.birthDate ? { birthDate: null } : {}),
+        birthTime: values.birthTime || null,
+        birthLocation: values.birthLocation || null,
+      };
+      
+      // If birthDate exists, create a proper Date object
+      if (values.birthDate) {
+        try {
+          userData.birthDate = new Date(values.birthDate);
+        } catch (err) {
+          console.error("Date parsing error:", err);
+        }
+      }
+      
+      await register(userData);
       
       toast({
         title: "Account Created",
@@ -93,6 +100,7 @@ const SignUp: React.FC = () => {
       
       navigate('/');
     } catch (error: any) {
+      console.error("Registration error:", error);
       setErrorMessage(error.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);

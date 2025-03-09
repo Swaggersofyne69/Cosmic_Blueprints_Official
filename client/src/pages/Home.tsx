@@ -38,10 +38,13 @@ const Home: React.FC = () => {
               <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6 text-white">
                 Discover Your <span className="text-accent">Cosmic Blueprint</span>
               </h2>
-              <p className="text-lg mb-8 opacity-90 text-white">
+              <p className="text-lg mb-4 opacity-90 text-white">
                 Unlock the mysteries of your astrological chart with our in-depth reports. 
                 Navigate life's journey with the wisdom of the stars as your guide.
               </p>
+              <blockquote className="border-l-4 border-accent pl-4 my-6 italic text-white opacity-85">
+                "Guided by the language of the stars, our Celestial Interpreter weaves together the cosmic threads that shape your journey, revealing the hidden wisdom within your birth chart."
+              </blockquote>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
                   size="lg"
