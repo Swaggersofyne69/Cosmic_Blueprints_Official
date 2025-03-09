@@ -76,20 +76,10 @@ const SignUp: React.FC = () => {
         username: values.username,
         email: values.email,
         password: values.password,
-        // Skip birthDate if not provided
-        ...(values.birthDate ? { birthDate: null } : {}),
+        birthDate: values.birthDate ? new Date(values.birthDate).toISOString() : null,
         birthTime: values.birthTime || null,
         birthLocation: values.birthLocation || null,
       };
-      
-      // If birthDate exists, create a proper Date object
-      if (values.birthDate) {
-        try {
-          userData.birthDate = new Date(values.birthDate);
-        } catch (err) {
-          console.error("Date parsing error:", err);
-        }
-      }
       
       await register(userData);
       

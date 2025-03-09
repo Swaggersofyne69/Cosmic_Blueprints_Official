@@ -4,6 +4,7 @@ import { useRoute } from 'wouter';
 import { Report } from '@shared/schema';
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from '@/providers/CartProvider';
+import { useAuth } from '@/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ShoppingCart, Eye, Star, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, Eye, Star, ArrowLeft, Download } from 'lucide-react';
 import { Link } from 'wouter';
 
 const ReportDetail: React.FC = () => {
@@ -22,6 +23,7 @@ const ReportDetail: React.FC = () => {
   
   const { addItem, isInCart } = useCart();
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Fetch report details
   const { 
@@ -44,8 +46,17 @@ const ReportDetail: React.FC = () => {
   };
   
   // Helper for displaying stars
-  const renderStars = (rating: number) => {
+  const renderStars = (rating: number | null) => {
     const stars = [];
+    
+    if (rating === null) {
+      // If rating is null, show 5 empty stars
+      for (let i = 0; i < 5; i++) {
+        stars.push(<Star key={`empty-${i}`} className="text-accent" />);
+      }
+      return stars;
+    }
+    
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     
@@ -144,7 +155,7 @@ const ReportDetail: React.FC = () => {
               {renderStars(report.rating)}
             </div>
             <span className="ml-2 text-sm text-gray-600">
-              ({report.reviewCount} reviews)
+              ({report.reviewCount || 0} reviews)
             </span>
           </div>
           
@@ -155,18 +166,34 @@ const ReportDetail: React.FC = () => {
           <p className="text-gray-700 mb-6">{report.description}</p>
           
           <div className="flex space-x-4 mb-8">
-            <Button 
-              size="lg"
-              onClick={handleAddToCart}
-              disabled={isInCart(report.id)}
-            >
-              {isInCart(report.id) ? 'In Cart' : (
-                <>
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Add to Cart
-                </>
-              )}
-            </Button>
+            {user?.isAdmin ? (
+              <Button 
+                size="lg" 
+                variant="default"
+                onClick={() => {
+                  toast({
+                    title: "Admin Access",
+                    description: `You have full access to ${report.title} as an admin.`,
+                  });
+                }}
+              >
+                <Download className="mr-2 h-5 w-5" />
+                Access Full Report
+              </Button>
+            ) : (
+              <Button 
+                size="lg"
+                onClick={handleAddToCart}
+                disabled={isInCart(report.id)}
+              >
+                {isInCart(report.id) ? 'In Cart' : (
+                  <>
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Add to Cart
+                  </>
+                )}
+              </Button>
+            )}
             
             {report.previewUrl && (
               <Button size="lg" variant="outline" asChild>
