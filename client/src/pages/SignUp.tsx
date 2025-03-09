@@ -76,7 +76,8 @@ const SignUp: React.FC = () => {
         username: values.username,
         email: values.email,
         password: values.password,
-        birthDate: values.birthDate ? new Date(values.birthDate).toISOString() : null,
+        // Handle the birthDate properly - either null or a proper Date
+        birthDate: values.birthDate ? values.birthDate : null,
         birthTime: values.birthTime || null,
         birthLocation: values.birthLocation || null,
       };

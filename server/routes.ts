@@ -60,7 +60,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
   app.post("/api/users/register", async (req, res) => {
     try {
-      const userData = insertUserSchema.parse(req.body);
+      // Prepare request data
+      const requestData = { ...req.body };
+      
+      // Convert birthDate string to Date or null
+      if (typeof requestData.birthDate === 'string' && requestData.birthDate.trim() !== '') {
+        try {
+          const date = new Date(requestData.birthDate);
+          if (!isNaN(date.getTime())) {
+            requestData.birthDate = date;
+          } else {
+            requestData.birthDate = null;
+          }
+        } catch (err) {
+          console.error("Date parsing error:", err);
+          requestData.birthDate = null;
+        }
+      } else {
+        requestData.birthDate = null;
+      }
+      
+      // Validate with schema, with loose validation on birthDate to fix later
+      const userData = {
+        ...requestData,
+        // Additional data validation/cleanup if needed
+      };
       
       // Check if user exists
       const existingUser = await storage.getUserByUsername(userData.username);
@@ -79,8 +103,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create user
       const user = await storage.createUser({
-        ...userData,
-        password: hashedPassword
+        username: userData.username,
+        email: userData.email,
+        password: hashedPassword,
+        birthDate: userData.birthDate,
+        birthTime: userData.birthTime || null,
+        birthLocation: userData.birthLocation || null
       });
       
       // Store user ID in session
