@@ -24,7 +24,9 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
   };
   
   // Helper for displaying stars
-  const renderStars = (rating: number) => {
+  const renderStars = (rating: number | null) => {
+    if (rating === null) return [];
+    
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
@@ -94,11 +96,11 @@ const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
             )}
           </Button>
           
-          <Button variant="outline" asChild>
-            <Link href={`/reports/${report.id}`}>
+          <Link href={`/reports/${report.id}`}>
+            <Button variant="outline">
               <Eye className="w-4 h-4" />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

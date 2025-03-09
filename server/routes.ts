@@ -13,6 +13,13 @@ import bcrypt from "bcryptjs";
 import session from "express-session";
 import MemoryStore from "memorystore";
 
+// Define custom session type
+declare module 'express-session' {
+  interface SessionData {
+    userId: number;
+  }
+}
+
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_your_key", {
   apiVersion: "2025-02-24.acacia"
