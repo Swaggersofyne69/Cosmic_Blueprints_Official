@@ -20,11 +20,11 @@ import { Link } from 'wouter';
 const ReportDetail: React.FC = () => {
   const [, params] = useRoute('/reports/:id');
   const reportId = params?.id ? parseInt(params.id) : 0;
-  
+
   const { addItem, isInCart } = useCart();
   const { toast } = useToast();
   const { user } = useAuth();
-  
+
   // Fetch report details
   const { 
     data: report, 
@@ -34,7 +34,7 @@ const ReportDetail: React.FC = () => {
     queryKey: [`/api/reports/${reportId}`],
     enabled: reportId > 0,
   });
-  
+
   const handleAddToCart = () => {
     if (report) {
       addItem(report);
@@ -44,11 +44,11 @@ const ReportDetail: React.FC = () => {
       });
     }
   };
-  
+
   // Helper for displaying stars
   const renderStars = (rating: number | null) => {
     const stars = [];
-    
+
     if (rating === null) {
       // If rating is null, show 5 empty stars
       for (let i = 0; i < 5; i++) {
@@ -56,14 +56,14 @@ const ReportDetail: React.FC = () => {
       }
       return stars;
     }
-    
+
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    
+
     for (let i = 0; i < fullStars; i++) {
       stars.push(<Star key={i} className="text-accent fill-accent" />);
     }
-    
+
     if (hasHalfStar) {
       stars.push(
         <span key="half" className="relative">
@@ -72,15 +72,15 @@ const ReportDetail: React.FC = () => {
         </span>
       );
     }
-    
+
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<Star key={`empty-${i}`} className="text-accent" />);
     }
-    
+
     return stars;
   };
-  
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -91,7 +91,7 @@ const ReportDetail: React.FC = () => {
       </div>
     );
   }
-  
+
   if (error || !report) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -115,7 +115,7 @@ const ReportDetail: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4 py-12">
       <Button variant="ghost" asChild className="mb-6">
@@ -124,7 +124,7 @@ const ReportDetail: React.FC = () => {
           Back to Reports
         </Link>
       </Button>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Report Image */}
         <div>
@@ -137,7 +137,7 @@ const ReportDetail: React.FC = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <i className={`fas fa-${report.iconName} text-9xl text-white opacity-20`}></i>
             </div>
-            
+
             {report.isBestseller && (
               <div className="absolute top-4 left-4">
                 <Badge variant="secondary" className="bg-accent text-dark">Bestseller</Badge>
@@ -145,11 +145,11 @@ const ReportDetail: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         {/* Report Details */}
         <div>
           <h1 className="font-heading text-3xl font-bold mb-2">{report.title}</h1>
-          
+
           <div className="flex items-center mb-4">
             <div className="flex">
               {renderStars(report.rating)}
@@ -158,13 +158,13 @@ const ReportDetail: React.FC = () => {
               ({report.reviewCount || 0} reviews)
             </span>
           </div>
-          
+
           <div className="text-2xl font-bold text-accent mb-6">
-            ${report.price.toFixed(2)}
+            <span>Free</span>
           </div>
-          
+
           <p className="text-gray-700 mb-6">{report.description}</p>
-          
+
           <div className="flex space-x-4 mb-8">
             {user?.isAdmin ? (
               <Button 
@@ -194,7 +194,7 @@ const ReportDetail: React.FC = () => {
                 )}
               </Button>
             )}
-            
+
             {report.previewUrl && (
               <Button size="lg" variant="outline" asChild>
                 <a href={report.previewUrl} target="_blank" rel="noopener noreferrer">
@@ -204,7 +204,7 @@ const ReportDetail: React.FC = () => {
               </Button>
             )}
           </div>
-          
+
           {/* Report Features */}
           <Card>
             <CardHeader>
@@ -237,7 +237,7 @@ const ReportDetail: React.FC = () => {
           </Card>
         </div>
       </div>
-      
+
       {/* Additional Information */}
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
@@ -257,7 +257,7 @@ const ReportDetail: React.FC = () => {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>What You'll Need</CardTitle>

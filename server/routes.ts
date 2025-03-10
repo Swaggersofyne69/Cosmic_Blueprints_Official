@@ -365,60 +365,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Stripe payment routes
-  app.post("/api/create-payment-intent", authenticate, async (req, res) => {
-    try {
-      const { amount } = req.body;
-      
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
-        currency: "usd",
-        metadata: { userId: req.session.userId!.toString() }
-      });
-      
-      res.json({ clientSecret: paymentIntent.client_secret });
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ message: `Error creating payment intent: ${error.message}` });
-    }
-  });
-  
-  // Checkout completion
+  // Free checkout process
   app.post("/api/checkout/complete", authenticate, async (req, res) => {
     try {
-      const { paymentIntentId } = req.body;
-      
       // Get cart items
       const cartItems = await storage.getCartItemsByUserId(req.session.userId!);
       if (cartItems.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
       }
       
-      // Calculate total
-      let total = 0;
+      // Get reports (all free now)
       const reportItems = await Promise.all(
         cartItems.map(async (item) => {
           const report = await storage.getReport(item.reportId);
           if (!report) throw new Error(`Report not found: ${item.reportId}`);
-          total += report.price;
           return report;
         })
       );
       
-      // Create order
+      // Create order with zero price
       const order = await storage.createOrder({
         userId: req.session.userId!,
-        total,
-        paymentIntentId
+        total: 0,
+        paymentIntentId: "free-reports"
       });
       
-      // Create order items
+      // Create order items with zero price
       await Promise.all(
         reportItems.map(async (report) => {
           await storage.createOrderItem({
             orderId: order.id,
             reportId: report.id,
-            price: report.price
+            price: 0
           });
         })
       );
@@ -427,6 +405,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.clearCart(req.session.userId!);
       
       res.status(201).json(order);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  // Direct report generation (skip cart)
+  app.post("/api/generate-report", authenticate, async (req, res) => {
+    try {
+      const { reportId } = req.body;
+      
+      // Check if report exists
+      const report = await storage.getReport(reportId);
+      if (!report) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+      
+      // Create order with zero price
+      const order = await storage.createOrder({
+        userId: req.session.userId!,
+        total: 0,
+        paymentIntentId: "direct-free-report"
+      });
+      
+      // Create order item
+      await storage.createOrderItem({
+        orderId: order.id,
+        reportId,
+        price: 0
+      });
+      
+      res.status(201).json({
+        message: "Report generated successfully",
+        order
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server error" });

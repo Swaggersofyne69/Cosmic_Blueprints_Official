@@ -1,252 +1,151 @@
-import React, { useEffect, useState } from 'react';
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { apiRequest } from "@/lib/queryClient";
-import { useCart } from '@/providers/CartProvider';
-import { useAuth } from '@/providers/AuthProvider';
-import { useToast } from "@/hooks/use-toast";
-import { useLocation } from 'wouter';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, CreditCard, AlertCircle } from 'lucide-react';
-import ConstellationBackground from '@/components/ConstellationBackground';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ConstellationBackground } from '@/components/ConstellationBackground';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/components/ui/use-toast';
 
-// Make sure to call `loadStripe` outside of a component's render to avoid
-// recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
-const CheckoutForm: React.FC = () => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+export const Checkout = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [, navigate] = useLocation();
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [isGenerating, setIsGenerating] = useState(false);
 
-    if (!stripe || !elements) {
-      return;
+  // Get cart items
+  const { data: cartItems, isLoading } = useQuery({
+    queryKey: ['cart'],
+    queryFn: async () => {
+      const response = await fetch('/api/cart');
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart');
+      }
+      return response.json();
     }
+  });
 
-    setIsProcessing(true);
-
-    try {
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: window.location.origin + '/account',
+  // Process free checkout
+  const completeFreeCheckout = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/checkout/complete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
+        body: JSON.stringify({})
       });
 
-      if (error) {
-        setErrorMessage(error.message);
-        toast({
-          title: "Payment Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Payment Successful",
-          description: "Thank you for your purchase!",
-        });
-        navigate('/account');
+      if (!response.ok) {
+        throw new Error('Checkout failed');
       }
-    } catch (err: any) {
-      setErrorMessage(err.message || 'An unexpected error occurred');
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
       toast({
-        title: "Payment Failed",
-        description: err.message || 'An unexpected error occurred',
-        variant: "destructive",
+        title: 'Reports Generated!',
+        description: 'Your reports have been generated successfully.',
       });
-    } finally {
-      setIsProcessing(false);
+      navigate('/account?tab=reports');
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: `Failed to generate reports: ${error.message}`,
+        variant: 'destructive'
+      });
     }
+  });
+
+  const handleGenerateReports = async () => {
+    setIsGenerating(true);
+    await completeFreeCheckout.mutateAsync();
+    setIsGenerating(false);
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {errorMessage && (
-        <div className="bg-destructive/10 p-4 rounded-md flex items-start mb-4">
-          <AlertCircle className="text-destructive mr-2 h-5 w-5 flex-shrink-0 mt-0.5" />
-          <span className="text-destructive">{errorMessage}</span>
-        </div>
-      )}
-      
-      <PaymentElement />
-      
-      <Button 
-        type="submit" 
-        className="w-full" 
-        size="lg" 
-        disabled={!stripe || isProcessing}
-      >
-        {isProcessing ? (
-          <span className="flex items-center">
-            <span className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full"></span>
-            Processing...
-          </span>
-        ) : (
-          <span className="flex items-center">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Pay Now
-          </span>
-        )}
-      </Button>
-    </form>
-  );
-};
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8 px-4">
+        <h2 className="font-heading text-2xl font-bold mb-6">Loading...</h2>
+      </div>
+    );
+  }
 
-const Checkout: React.FC = () => {
-  const [clientSecret, setClientSecret] = useState("");
-  const { items, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
-  const [, navigate] = useLocation();
-  const { toast } = useToast();
-  
-  useEffect(() => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please login to complete your purchase",
-        variant: "destructive",
-      });
-      navigate('/login?redirect=/checkout');
-      return;
-    }
-    
-    if (items.length === 0) {
-      toast({
-        title: "Empty Cart",
-        description: "Your cart is empty. Please add items before checkout.",
-        variant: "destructive",
-      });
-      navigate('/reports');
-      return;
-    }
-    
-    // Create PaymentIntent as soon as the page loads
-    const createPaymentIntent = async () => {
-      try {
-        const res = await apiRequest("POST", "/api/create-payment-intent", { amount: totalPrice });
-        const data = await res.json();
-        setClientSecret(data.clientSecret);
-      } catch (error) {
-        console.error("Error creating payment intent:", error);
-        toast({
-          title: "Payment Error",
-          description: "There was a problem setting up the payment. Please try again.",
-          variant: "destructive",
-        });
-      }
-    };
-    
-    createPaymentIntent();
-  }, [user, items, totalPrice, navigate, toast]);
-
-  const handleCompleteCheckout = async () => {
-    try {
-      await apiRequest("POST", "/api/checkout/complete", { 
-        paymentIntentId: "pi_" + clientSecret.split("_secret_")[0] 
-      });
-      clearCart();
-      toast({
-        title: "Order Completed",
-        description: "Your order has been successfully processed!",
-      });
-      navigate('/account');
-    } catch (error) {
-      console.error("Error completing checkout:", error);
-      toast({
-        title: "Checkout Error",
-        description: "There was a problem completing your order. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  if (!cartItems || cartItems.length === 0) {
+    return (
+      <div className="container mx-auto py-8 px-4 text-center">
+        <h2 className="font-heading text-2xl font-bold mb-6">Your Cart is Empty</h2>
+        <p className="mb-6">Add reports to your cart to generate your personalized astrological insights.</p>
+        <Button onClick={() => navigate('/reports')}>Browse Reports</Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <Button variant="ghost" asChild className="mb-6">
-        <a href="/cart">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Cart
-        </a>
-      </Button>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Secure Checkout</CardTitle>
-              <CardDescription>Complete your purchase securely</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {!clientSecret ? (
-                <div className="flex flex-col items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                  <p className="mt-4 text-gray-600">Preparing your checkout...</p>
-                </div>
-              ) : (
-                <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <CheckoutForm />
-                </Elements>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-        
+    <div className="container mx-auto py-8 px-4">
+      <h2 className="font-heading text-2xl font-bold mb-6">Generate Your Reports</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>Your Reports</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {items.map((item) => (
+                {cartItems.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <span>{item.report.title}</span>
-                    <span>${item.report.price.toFixed(2)}</span>
+                    <span>Free</span>
                   </div>
                 ))}
-                
+
                 <Separator className="my-4" />
-                
+
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>Free</span>
                 </div>
               </div>
             </CardContent>
           </Card>
-          
-          <div className="mt-8">
-            <ConstellationBackground className="rounded-lg p-6">
-              <div className="text-white">
-                <h3 className="font-heading text-xl font-bold mb-2">Your Cosmic Journey Awaits</h3>
-                <p className="opacity-80 mb-4">
-                  Your personalized astrological reports will be available for instant download in your account 
-                  after payment is complete.
-                </p>
-                <div className="flex items-center">
-                  <i className="fas fa-lock mr-2"></i>
-                  <span>Secure Payment Processing</span>
-                </div>
-              </div>
-            </ConstellationBackground>
-          </div>
+
+          <Button 
+            className="w-full mt-6" 
+            onClick={handleGenerateReports}
+            disabled={isGenerating}
+          >
+            {isGenerating ? 'Generating Reports...' : 'Generate Reports'}
+          </Button>
+        </div>
+
+        <div>
+          <ConstellationBackground className="rounded-lg p-6">
+            <div className="text-white">
+              <h3 className="font-heading text-xl font-bold mb-2">Your Cosmic Journey Awaits</h3>
+              <p className="opacity-80 mb-4">
+                Your personalized astrological reports will be available for instant download in your account 
+                after generation is complete.
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-center">
+                  <i className="fas fa-check mr-2"></i>
+                  <span>Detailed 30+ page personalized report</span>
+                </li>
+                <li className="flex items-center">
+                  <i className="fas fa-check mr-2"></i>
+                  <span>Accurate calculations based on your exact birth details</span>
+                </li>
+                <li className="flex items-center">
+                  <i className="fas fa-check mr-2"></i>
+                  <span>Interpretation of all significant astrological factors</span>
+                </li>
+              </ul>
+            </div>
+          </ConstellationBackground>
         </div>
       </div>
     </div>
